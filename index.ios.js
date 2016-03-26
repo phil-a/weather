@@ -7,6 +7,7 @@ var {
   StyleSheet
 } = React
 var mapApi = require('./src/map-api');
+var Switch = require('react-native-material-switch');
 
 var Weather = React.createClass({
   getInitialState: function() {
@@ -17,7 +18,8 @@ var Weather = React.createClass({
       },
       city: '',
       temperature: '',
-      description: ''
+      description: '',
+      updatesEnabled: true
     }
   },
   render: function() {
@@ -33,6 +35,12 @@ var Weather = React.createClass({
           <Text style={styles.text}>{this.state.temperature}</Text>
           <Text style={styles.text}>{this.state.description}</Text>
         </View>
+        <View style={styles.switchWrapper}>
+          <Switch
+          onChangeState={this.onSwitchChange}
+          />
+          <Text style={styles.text}>{this.state.updatesEnabled ? "Updates ON" : "Updates OFF"}</Text>
+        </View>
       </View>
     );
   },
@@ -43,11 +51,18 @@ var Weather = React.createClass({
         latitude: region.latitude
       }
     });
+    if (this.state.updatesEnabled){
     mapApi(region.latitude, region.longitude)
       .then((data) => {
         console.log(data);
         this.setState(data);
       });
+    }
+  },
+  onSwitchChange: function(state) {
+    this.setState({
+      updatesEnabled: !state
+    })
   }
 });
 
@@ -59,16 +74,22 @@ var styles = StyleSheet.create({
     backgroundColor: '#F5FCFF'
   },
   map: {
-    flex: 2,
+    flex: 8,
     marginTop: 30
   },
   textWrapper: {
-    flex: 1,
+    flex: 2,
     alignItems: 'center'
   },
   text: {
-    fontSize: 30
-  }
+    fontSize: 20,
+  },
+  switchWrapper: {
+  flex: 1,
+  alignItems: 'center',
+  justifyContent: 'space-around',
+  marginBottom: 10
+}
 });
 
 AppRegistry.registerComponent('weather', () => Weather);
