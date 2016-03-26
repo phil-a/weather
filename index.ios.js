@@ -5,7 +5,7 @@ var {
   View,
   StyleSheet
 } = React
-
+var mapApi = require('./src/map-api');
 
 var Weather = React.createClass({
   getInitialState: function() {
@@ -13,7 +13,10 @@ var Weather = React.createClass({
       pin: {
         latitude: 0,
         longitude: 0,
-      }
+      },
+      city: '',
+      temperature: '',
+      description: ''
     }
   },
   render: function() {
@@ -32,6 +35,11 @@ var Weather = React.createClass({
         latitude: region.latitude
       }
     });
+    mapApi(region.latitude, region.longitude)
+      .then((data) => {
+        console.log(data);
+        this.setState(data);
+      });
   }
 });
 
